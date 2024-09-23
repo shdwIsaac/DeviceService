@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceService", "DeviceService.csproj", "{8F3A907E-DDB8-4C0C-A5F1-96A4D350F8E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1BC092BA-7E18-45FC-83C5-E4CA892A903D}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F3A907E-DDB8-4C0C-A5F1-96A4D350F8E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F3A907E-DDB8-4C0C-A5F1-96A4D350F8E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F3A907E-DDB8-4C0C-A5F1-96A4D350F8E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F3A907E-DDB8-4C0C-A5F1-96A4D350F8E0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

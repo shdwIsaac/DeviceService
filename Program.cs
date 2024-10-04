@@ -1,6 +1,7 @@
+using System.Text;
+using System.Text.Json;
 using Confluent.Kafka;
 using DeviceService;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,30 +22,35 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/devices/{id:long}", (long id) => new DeviceResponse
+app.MapGet("/devices/{id:long}", async (long id) =>
     {
-        id = id,
-        status = "on",
-        created_at = DateTime.Now,
-        house_id = 1,
-        serial_number = "A123",
-        type = "Telemetry"
+        using HttpClient httpClient = new HttpClient();
+        httpClient.BaseAddress = new Uri("http://smart-home-monolith:8080");
+        using HttpResponseMessage response = await httpClient.GetAsync($"/api/heating/{id}");
+        response.EnsureSuccessStatusCode();
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<DeviceResponse>(jsonResponse);
     })
     .WithOpenApi();
 
-app.MapPut("/devices/{id:long}/status", (long id, [FromBody]StatusRequest request) => new StatusResponse
-    {
-        id = id,
-        status = request.Status,
-        updated_at = DateTime.Now
+
+app.MapPut("/devices/{id:long}/status", async (long id, [FromBody] StatusRequest request) =>  {
+        using HttpClient httpClient = new HttpClient();
+        httpClient.BaseAddress = new Uri("http://smart-home-monolith:8080");
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+        using HttpResponseMessage response = await httpClient.PutAsync($"/api/heating/{id}", content);
+        response.EnsureSuccessStatusCode();
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<DeviceResponse>(jsonResponse);
     })
     .WithOpenApi();
 
-app.MapPost("/devices/{id:long}/commands", (long id, [FromBody]CommandRequest request) =>
+app.MapPost("/devices/{id:long}/commands", async (long id, [FromBody] CommandRequest request) =>
     {
-        var config = new ProducerConfig {BootstrapServers = "localhost:9092"};
-        using var producer = new ProducerBuilder<string, string>(config).Build();
-        var result = producer.ProduceAsync("telemetry-data", new Message<string, string> { Value = "Device" });
+        using HttpClient httpClient = new HttpClient();
+        httpClient.BaseAddress = new Uri("http://smart-home-monolith:8080");
+        using HttpResponseMessage response = await httpClient.GetAsync($"/api/heating/{id}/{request.Command}");
+        response.EnsureSuccessStatusCode();
     })
     .WithOpenApi();
 
